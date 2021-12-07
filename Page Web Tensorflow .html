@@ -51,7 +51,8 @@
     </div>
     <div class="row">
       <div class="col-9">
-        <p class="d-flex justify-content-center" id="predictionbox">Aucun objet détecté</p>
+        <div class="d-flex justify-content-center" id="predictionbox">Aucun objet détecté          
+        </div>
       </div>
     </div>
   </div>
@@ -97,7 +98,7 @@
         predictionBox.innerText = ""
         let p = document.createElement("p")
         predictions.forEach(element => console.log(element.class, element.score));
-        predictions.forEach(element => predictionBox.append(element.class + " à " + Math.round(element.score * 100) + "% a été détecté "), p ); 
+        predictions.forEach(element => predictionBox.append(element.class + " " + Math.round(element.score * 100) + "% "), p ); 
       });
     });
   };
