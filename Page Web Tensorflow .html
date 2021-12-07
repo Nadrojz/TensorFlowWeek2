@@ -51,7 +51,7 @@
     </div>
     <div class="row">
       <div class="col-9">
-        <p class="d-flex justify-content-center" id="predictionbox"></p>
+        <p class="d-flex justify-content-center" id="predictionbox">Liste objets trouvés et %age de certitude</p>
       </div>
     </div>
   </div>
@@ -93,6 +93,7 @@
     cocoSsd.load().then(model => {
       model.detect(webcamStream).then(predictions => {
         console.log('Predictions: ', predictions, predictions[0].class, predictions[0].score);
+        predictionBox.innerText = "Il s'agit de " + predictions[0].class + " à " + Math.round(predictions[0].score * 100) + " % de certitude"
       });
     });
   };
