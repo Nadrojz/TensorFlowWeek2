@@ -51,7 +51,8 @@
     </div>
     <div class="row">
       <div class="col-9">
-        <p class="d-flex justify-content-center">Liste objet trouvé + %age certitude</p>
+        <div class="d-flex justify-content-center" id="predictionbox">Aucun objet détecté          
+        </div>
       </div>
     </div>
   </div>
@@ -61,9 +62,11 @@
   var startWebcam = document.getElementById('startwebcam')
   var stopWebcam = document.getElementById('stopwebcam')
   var webcamStream = document.getElementById('webcamstream')
+  var predictionBox = document.getElementById('predictionbox')
 
 
   startWebcam.onclick = function(){
+    webcamStream.style.display = 'block'
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(function(stream) {
         webcamStream.srcObject = stream;
@@ -79,8 +82,22 @@
     var tracks = stream.getTracks();
     tracks.forEach(function(track) {
     track.stop();
+    webcamStream.style.display = 'none';
+    predictionBox.innerText = "Aucun objet détecté"
   });
-  webcamStream.srcObject = null;
+  // webcamStream.srcObject = null;
+  };
+
+
+  webcamStream.onloadeddata = (event) => {
+    cocoSsd.load().then(model => {
+      model.detect(webcamStream).then( function(predictions) {
+        predictionBox.innerText = ""
+        let p = document.createElement("p")
+        predictions.forEach(element => console.log(element.class, element.score));
+        predictions.forEach(element => predictionBox.append(element.class + " " + Math.round(element.score * 100) + "% "), p ); 
+      });
+    });
   };
 
 </script>
