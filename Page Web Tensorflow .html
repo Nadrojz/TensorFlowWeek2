@@ -67,8 +67,10 @@
   var webcamStream = document.getElementById('webcamstream')
   var predictionBox = document.getElementById('predictionbox')
 
+  startWebcam.addEventListener('click', startStream)
+  stopWebcam.addEventListener('click', stopStream)
 
-  startWebcam.onclick = function(){
+  function startStream(){
     webcamStream.style.display = 'block'
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(function(stream) {
@@ -78,9 +80,9 @@
     .catch(function(err) {
         console.log("An error occurred: " + err);
     });
-  };
+  }
 
-  stopWebcam.onclick = function(){
+  function stopStream(){
     var stream = webcamStream.srcObject;
     var tracks = stream.getTracks();
     tracks.forEach(function(track) {
@@ -89,7 +91,7 @@
     predictionBox.innerText = "Aucun objet détecté"
   });
   // webcamStream.srcObject = null;
-  };
+  }
 
 
   webcamStream.onloadeddata = (event) => {
