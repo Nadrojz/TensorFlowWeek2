@@ -67,10 +67,18 @@
   var webcamStream = document.getElementById('webcamstream')
   var predictionBox = document.getElementById('predictionbox')
 
+  var model = undefined;
+  cocoSsd.load().then(function (loadedModel) {
+    model = loadedModel;
+  });
+
+  StreamOn = false
+
   startWebcam.addEventListener('click', startStream)
   stopWebcam.addEventListener('click', stopStream)
 
   function startStream(){
+    StreamOn = true
     webcamStream.style.display = 'block'
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(function(stream) {
@@ -83,6 +91,7 @@
   }
 
   function stopStream(){
+    streamOn = false
     var stream = webcamStream.srcObject;
     var tracks = stream.getTracks();
     tracks.forEach(function(track) {
@@ -93,17 +102,22 @@
   // webcamStream.srcObject = null;
   }
 
+  function refreshWindow() {
+    if (streamOn = true) {
+      window.requestAnimationFrame(predict);
+    }
+  }
 
-  webcamStream.onloadeddata = (event) => {
-    cocoSsd.load().then(model => {
-      model.detect(webcamStream).then( function(predictions) {
-        predictionBox.innerText = ""
-        let p = document.createElement("p")
-        predictions.forEach(element => console.log(element.class, element.score));
-        predictions.forEach(element => predictionBox.append(element.class + " " + Math.round(element.score * 100) + "% "), p ); 
-      });
+  webcamStream.addEventListener('loadeddata', predict)
+
+  function predict() {
+    model.detect(webcamStream).then( function(predictions) {
+      predictionBox.innerText = ""
+      let p = document.createElement("p")
+      predictions.forEach(element => console.log(element.class, element.score));
+      predictions.forEach(element => predictionBox.append(element.class + " " + Math.round(element.score * 100) + "% "), p ); 
     });
-  };
+  }
 
 </script>
 
