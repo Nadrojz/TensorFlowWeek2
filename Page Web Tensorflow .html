@@ -67,16 +67,14 @@
   var webcamStream = document.getElementById('webcamstream')
   var predictionBox = document.getElementById('predictionbox')
 
-  var model = undefined;
-  cocoSsd.load().then(function (loadedModel) {
-    model = loadedModel;
-  });
-
 
   startWebcam.addEventListener('click', startStream)
   stopWebcam.addEventListener('click', stopStream)
 
   function startStream(){
+    cocoSsd.load().then(function (loadedModel) {
+      model = loadedModel;
+    });
     webcamStream.style.display = 'block'
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(function(stream) {
@@ -105,7 +103,7 @@
       model.detect(webcamStream).then( function(predictions) {
         predictionBox.innerText = ""
         let p = document.createElement("p")
-        predictions.forEach(element => console.log(element.class, element.score));
+        predictions.forEach(element => console.log(element.class, element.score, element));
         predictions.forEach(element => predictionBox.append(element.class + " " + Math.round(element.score * 100) + "% "), p );
         window.requestAnimationFrame(predict);
     });
