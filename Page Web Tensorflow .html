@@ -15,7 +15,7 @@
       </div>
   </nav>
   <div class="d-flex justify-content-center">
-    <h1>Titre de la page</h1>
+    <h1>Proof Of Concept NoNo</h1>
   </div>
   <div class="container">
     <div class="row">
@@ -51,7 +51,7 @@
     </div>
     <div class="row">
       <div class="col-9">
-        <div class="d-flex justify-content-center" id="predictionbox">Aucun objet détecté          
+        <div class="d-flex justify-content-center" id="predictionbox">Aucun objet trouvé          
         </div>
       </div>
     </div>
@@ -72,13 +72,11 @@
     model = loadedModel;
   });
 
-  StreamOn = false
 
   startWebcam.addEventListener('click', startStream)
   stopWebcam.addEventListener('click', stopStream)
 
   function startStream(){
-    StreamOn = true
     webcamStream.style.display = 'block'
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     .then(function(stream) {
@@ -88,35 +86,30 @@
     .catch(function(err) {
         console.log("An error occurred: " + err);
     });
+    webcamStream.addEventListener('loadeddata', predict)
   }
 
   function stopStream(){
-    streamOn = false
     var stream = webcamStream.srcObject;
     var tracks = stream.getTracks();
     tracks.forEach(function(track) {
     track.stop();
     webcamStream.style.display = 'none';
     predictionBox.innerText = "Aucun objet détecté"
+    model = undefined
   });
-  // webcamStream.srcObject = null;
   }
-
-  function refreshWindow() {
-    if (streamOn = true) {
-      window.requestAnimationFrame(predict);
-    }
-  }
-
-  webcamStream.addEventListener('loadeddata', predict)
 
   function predict() {
-    model.detect(webcamStream).then( function(predictions) {
-      predictionBox.innerText = ""
-      let p = document.createElement("p")
-      predictions.forEach(element => console.log(element.class, element.score));
-      predictions.forEach(element => predictionBox.append(element.class + " " + Math.round(element.score * 100) + "% "), p ); 
+    if (model !== undefined) {
+      model.detect(webcamStream).then( function(predictions) {
+        predictionBox.innerText = ""
+        let p = document.createElement("p")
+        predictions.forEach(element => console.log(element.class, element.score));
+        predictions.forEach(element => predictionBox.append(element.class + " " + Math.round(element.score * 100) + "% "), p );
+        window.requestAnimationFrame(predict);
     });
+    }
   }
 
 </script>
